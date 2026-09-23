@@ -4,41 +4,14 @@ index.html
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>minami Timesick Traveler 2027 Fan Guide</title>
-
-  <style>
-    body {
-      margin: 0;
-      padding: 40px 20px;
-      background-color: #111111;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-
-    h1 {
-      margin-bottom: 10px;
-      color: #ff4d6d;
-    }
-
-    h2 {
-      font-weight: normal;
-      color: #dddddd;
-    }
-
-    p {
-      color: #bbbbbb;
-      line-height: 1.6;
-    }
-  </style>
 </head>
-
 <body>
   <h1>美波 minami</h1>
   <h2>Timesick Traveler 2027</h2>
 
   <p>비공식 팬메이드 응원 가이드입니다.</p>
+
   <p>사이트를 준비하고 있습니다.</p>
 </body>
 </html>
