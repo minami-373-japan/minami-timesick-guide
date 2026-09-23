@@ -3,152 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>minami Timesick Traveler 2027 Fan Guide</title>
-
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      background: #101014;
-      color: #ffffff;
-      font-family: Arial, sans-serif;
-    }
-
-    header {
-      padding: 55px 20px 40px;
-      text-align: center;
-      background: linear-gradient(135deg, #190b16, #35111d);
-    }
-
-    header h1 {
-      margin: 0 0 12px;
-      color: #ff5477;
-      font-size: 32px;
-    }
-
-    header h2 {
-      margin: 0;
-      color: #eeeeee;
-      font-size: 20px;
-      font-weight: normal;
-    }
-
-    header p {
-      margin: 20px 0 0;
-      color: #bbbbbb;
-      font-size: 14px;
-    }
-
-    main {
-      width: min(900px, calc(100% - 32px));
-      margin: 35px auto;
-    }
-
-    .section-title {
-      margin-bottom: 18px;
-      font-size: 22px;
-    }
-
-    .song-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .song-button {
-      width: 100%;
-      padding: 18px 20px;
-      border: 1px solid #3a3a45;
-      border-radius: 14px;
-      background: #1b1b23;
-      color: #ffffff;
-      text-align: left;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .song-button:hover {
-      background: #30202a;
-      border-color: #ff5477;
-      transform: translateY(-2px);
-    }
-
-    .song-number {
-      display: inline-block;
-      width: 32px;
-      color: #ff5477;
-      font-weight: bold;
-    }
-
-    #detail {
-      display: none;
-    }
-
-    .back-button {
-      margin-bottom: 20px;
-      padding: 10px 16px;
-      border: 1px solid #555563;
-      border-radius: 8px;
-      background: transparent;
-      color: #ffffff;
-      cursor: pointer;
-    }
-
-    .back-button:hover {
-      background: #292932;
-    }
-
-    #song-title {
-      margin-bottom: 20px;
-      color: #ff5477;
-    }
-
-    .video-wrapper {
-      position: relative;
-      width: 100%;
-      padding-bottom: 56.25%;
-      overflow: hidden;
-      border-radius: 14px;
-      background: #000000;
-    }
-
-    .video-wrapper iframe {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border: 0;
-      left: 0;
-      top: 0;
-    }
-
-    .guide-box {
-      margin-top: 24px;
-      padding: 22px;
-      border-radius: 14px;
-      background: #1b1b23;
-    }
-
-    .guide-box h3 {
-      margin-top: 0;
-      color: #ffcf5a;
-    }
-
-    .guide-box li {
-      margin-bottom: 12px;
-      line-height: 1.6;
-      color: #dddddd;
-    }
-
-    footer {
-      padding: 30px 20px;
-      color: #777783;
-      text-align: center;
-      font-size: 12px;
-    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #101014; color: #ffffff; font-family: Arial, sans-serif; }
+    header { padding: 55px 20px 40px; text-align: center; background: linear-gradient(135deg, #190b16, #35111d); }
+    header h1 { margin: 0 0 12px; color: #ff5477; font-size: 32px; }
+    header h2 { margin: 0; color: #eeeeee; font-size: 20px; font-weight: normal; }
+    header p { margin: 20px 0 0; color: #bbbbbb; font-size: 14px; }
+    main { width: min(900px, calc(100% - 32px)); margin: 35px auto; }
+    .section-title { margin-bottom: 18px; font-size: 22px; }
+    .song-list { display: grid; gap: 12px; }
+    .song-button { width: 100%; padding: 18px 20px; border: 1px solid #3a3a45; border-radius: 14px; background: #1b1b23; color: #ffffff; text-align: left; font-size: 16px; cursor: pointer; transition: 0.2s; }
+    .song-button:hover { background: #30202a; border-color: #ff5477; transform: translateY(-2px); }
+    .song-number { display: inline-block; width: 32px; color: #ff5477; font-weight: bold; }
+    #detail { display: none; }
+    .back-button { margin-bottom: 20px; padding: 10px 16px; border: 1px solid #555563; border-radius: 8px; background: transparent; color: #ffffff; cursor: pointer; }
+    .back-button:hover { background: #292932; }
+    #song-title { margin-bottom: 20px; color: #ff5477; }
+    .video-wrapper { position: relative; width: 100%; padding-bottom: 56.25%; overflow: hidden; border-radius: 14px; background: #000000; }
+    /* iframe 대신 YouTube API가 사용할 div 태그 스타일 설정 */
+    .video-wrapper #youtube-player { position: absolute; width: 100%; height: 100%; left: 0; top: 0; }
+    .guide-box { margin-top: 24px; padding: 22px; border-radius: 14px; background: #1b1b23; }
+    .guide-box h3 { margin-top: 0; color: #ffcf5a; }
+    .guide-box li { margin-bottom: 12px; line-height: 1.6; color: #dddddd; }
+    footer { padding: 30px 20px; color: #777783; text-align: center; font-size: 12px; }
   </style>
 </head>
 
@@ -173,13 +52,8 @@
       <h2 id="song-title"></h2>
 
       <div class="video-wrapper">
-        <iframe
-          id="youtube-player"
-          src=""
-          title="YouTube video player"
-          allow="autoplay; encrypted-media; picture-in-picture"
-          allowfullscreen>
-        </iframe>
+        <!-- iframe을 div로 변경하여 YouTube API가 로드되도록 변경 -->
+        <div id="youtube-player"></div>
       </div>
 
       <div class="guide-box">
@@ -192,6 +66,9 @@
   <footer>
     본 사이트는 미나미 팬이 제작한 비공식 응원 가이드입니다.
   </footer>
+
+  <!-- 1. YouTube Iframe Player API 스크립트 불러오기 -->
+  <script src="https://www.youtube.com/iframe_api"></script>
 
   <script>
     const songs = [
@@ -224,8 +101,23 @@
     const listSection = document.getElementById("list");
     const detailSection = document.getElementById("detail");
     const songTitle = document.getElementById("song-title");
-    const youtubePlayer = document.getElementById("youtube-player");
     const guidePoints = document.getElementById("guide-points");
+
+    let player; // 유튜브 플레이어 객체 변수
+
+    // 2. API가 준비되면 호출되는 기본 함수
+    function onYouTubeIframeAPIReady() {
+      // 초기 플레이어 틀 생성
+      player = new YT.Player('youtube-player', {
+        height: '100%',
+        width: '100%',
+        playerVars: {
+          'autoplay': 1,
+          'playsinline': 1,
+          'rel': 0
+        }
+      });
+    }
 
     songs.forEach((song, index) => {
       const button = document.createElement("button");
@@ -248,9 +140,13 @@
       detailSection.style.display = "block";
 
       songTitle.textContent = song.title;
-      youtubePlayer.src =
-  `https://www.youtube-nocookie.com/embed/${song.youtubeId}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${song.youtubeId}&rel=0`;
 
+      // 3. API를 사용하여 곡 전환 및 자동 재생 (사용자가 버튼을 눌렀으므로 소리가 켜진 채로 재생 시도)
+      if (player && player.loadVideoById) {
+        player.loadVideoById(song.youtubeId);
+        player.unMute(); // 소리 켜기
+        player.playVideo(); // 재생
+      }
 
       guidePoints.innerHTML = "";
 
@@ -267,7 +163,11 @@
       detailSection.style.display = "none";
       listSection.style.display = "block";
 
-      youtubePlayer.src = "";
+      // 목록으로 돌아갈 때 영상 정지
+      if (player && player.stopVideo) {
+        player.stopVideo();
+      }
+
       window.scrollTo(0, 0);
     }
   </script>
