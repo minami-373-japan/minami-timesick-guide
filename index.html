@@ -177,7 +177,7 @@
           id="youtube-player"
           src=""
           title="YouTube video player"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen>
         </iframe>
       </div>
@@ -249,7 +249,7 @@
 
       songTitle.textContent = song.title;
       youtubePlayer.src =
-  `https://www.youtube-nocookie.com/embed/${song.youtubeId}?rel=0`;
+  `https://www.youtube-nocookie.com/embed/${song.youtubeId}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${song.youtubeId}&rel=0`;
 
 
       guidePoints.innerHTML = "";
