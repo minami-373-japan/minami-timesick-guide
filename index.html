@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>minami Timesick Traveler 2027 Fan Guide</title>
+
   <style>
     * {
       box-sizing: border-box;
@@ -114,25 +116,13 @@
       background: #000000;
     }
 
-    /* HTML5 video 태그 스타일 */
-    .video-wrapper video {
+    .video-wrapper iframe {
       position: absolute;
       width: 100%;
       height: 100%;
+      border: 0;
       left: 0;
       top: 0;
-      object-fit: contain;
-    }
-
-    /* 비디오 로딩 중 표시 안내 */
-    .video-loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: #888888;
-      font-size: 14px;
-      pointer-events: none;
     }
 
     .guide-box {
@@ -183,9 +173,13 @@
       <h2 id="song-title"></h2>
 
       <div class="video-wrapper">
-        <span id="loading-text" class="video-loading">영상 스트림을 불러오는 중...</span>
-        <!-- YouTube iframe 대신 순수 HTML5 video 태그 적용 -->
-        <video id="video-player" controls playsinline autoplay></video>
+        <iframe
+          id="youtube-player"
+          src=""
+          title="YouTube video player"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen>
+        </iframe>
       </div>
 
       <div class="guide-box">
@@ -202,26 +196,12 @@
   <script>
     const songs = [
       {
-        title: "테스트 곡 1 (Main Stream)",
-        youtubeId: "dQw4w9WgXcQ",
+        title: "ララック (Lalac)",
+        youtubeId: "766qmHTc2ro",
         guidePoints: [
-          "이곳에 함께 부를 구간을 적을 예정입니다.",
-          "이곳에 박수나 손동작 타이밍을 적을 예정입니다.",
-          "이곳에 감상 포인트를 적을 예정입니다."
-        ]
-      },
-      {
-        title: "테스트 곡 2",
-        youtubeId: "dQw4w9WgXcQ",
-        guidePoints: [
-          "나중에 실제 응원 포인트로 바꿔주세요."
-        ]
-      },
-      {
-        title: "테스트 곡 3",
-        youtubeId: "dQw4w9WgXcQ",
-        guidePoints: [
-          "곡 정보를 준비한 뒤 이 부분을 수정하면 됩니다."
+          "후비구 떼창 구간 및 클랩 박자 확인",
+          "라이브 특유의 템포 감상 포인트",
+          "곡 전체 응원 타이밍 가이드 작성 예정"
         ]
       }
     ];
@@ -230,17 +210,8 @@
     const listSection = document.getElementById("list");
     const detailSection = document.getElementById("detail");
     const songTitle = document.getElementById("song-title");
-    const videoPlayer = document.getElementById("video-player");
-    const loadingText = document.getElementById("loading-text");
+    const youtubePlayer = document.getElementById("youtube-player");
     const guidePoints = document.getElementById("guide-points");
-
-    // Invidious 퍼블릭 인스턴스 서버 주소 목록 (백업 서버 자동 전환용)
-    const invidiousInstances = [
-      "https://inv.nerdvpn.de",
-      "https://invidious.nerdvpn.de",
-      "https://vid.puffyan.us",
-      "https://invidious.flokinet.to"
-    ];
 
     songs.forEach((song, index) => {
       const button = document.createElement("button");
@@ -258,15 +229,16 @@
       songList.appendChild(button);
     });
 
-    async function showDetail(song) {
+    function showDetail(song) {
       listSection.style.display = "none";
       detailSection.style.display = "block";
 
       songTitle.textContent = song.title;
-      loadingText.style.display = "block";
-      videoPlayer.src = ""; // 이전 영상 초기화
+      youtubePlayer.src =
+  `https://www.youtube-nocookie.com/embed/${song.youtubeId}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${song.youtubeId}&rel=0`;
 
       guidePoints.innerHTML = "";
+
       song.guidePoints.forEach((point) => {
         const li = document.createElement("li");
         li.textContent = point;
@@ -274,52 +246,13 @@
       });
 
       window.scrollTo(0, 0);
-
-      // Invidious API를 활용하여 순수 비디오 스트림 URL 가져오기
-      await loadDirectVideoStream(song.youtubeId);
-    }
-
-    async function loadDirectVideoStream(youtubeId) {
-      let streamUrl = null;
-
-      // 이용 가능한 Invidious 서버 중 동작하는 서버에서 스트림 URL을 요청
-      for (const instance of invidiousInstances) {
-        try {
-          const response = await fetch(`${instance}/api/v1/videos/${youtubeId}`);
-          if (!response.ok) continue;
-
-          const data = await response.json();
-          // 비디오와 오디오가 통합된 MP4 스트림 추출 (가장 화질이 적절한 스트림)
-          const format = data.formatStreams.find(s => s.container === 'mp4' && s.quality === 'medium') 
-                      || data.formatStreams[0];
-
-          if (format && format.url) {
-            streamUrl = format.url;
-            break;
-          }
-        } catch (err) {
-          console.warn(`서버 ${instance} 연결 실패, 다음 서버 시도 중...`);
-        }
-      }
-
-      if (streamUrl) {
-        loadingText.style.display = "none";
-        videoPlayer.src = streamUrl;
-        
-        // 클릭 액션 이후 호출되므로 소리(Audio) 포함 자동재생
-        videoPlayer.play().catch(e => console.log("자동재생 차단됨:", e));
-      } else {
-        loadingText.textContent = "영상을 불러올 수 없습니다. 네트워크를 확인해주세요.";
-      }
     }
 
     function showList() {
       detailSection.style.display = "none";
       listSection.style.display = "block";
 
-      // 목록으로 돌아갈 때 영상 일시정지 및 소스 초기화
-      videoPlayer.pause();
-      videoPlayer.src = "";
+      youtubePlayer.src = "";
       window.scrollTo(0, 0);
     }
   </script>
