@@ -190,13 +190,13 @@
   </main>
 
   <footer>
-    본 사이트는 미나미 팬이 제작한 비공식 응원 가이드입니다.
+    
   </footer>
 
   <script>
     const songs = [
       {
-        title: "ララック (Lalac)",
+        title: "「비를 기다리다, (アメヲマツ、)」",
         youtubeId: "766qmHTc2ro",
         guidePoints: [
           "후비구 떼창 구간 및 클랩 박자 확인",
@@ -234,8 +234,9 @@
       detailSection.style.display = "block";
 
       songTitle.textContent = song.title;
+      // 음소거(mute=1) 및 자동재생(autoplay=1) 옵션을 제거하여 사용자가 재생할 때 소리가 정상 출력되도록 수정
       youtubePlayer.src =
-  `https://www.youtube-nocookie.com/embed/${song.youtubeId}?autoplay=1&mute=1&playsinline=1&loop=1&playlist=${song.youtubeId}&rel=0`;
+  `https://www.youtube-nocookie.com/embed/${song.youtubeId}?playsinline=1&rel=0`;
 
       guidePoints.innerHTML = "";
 
