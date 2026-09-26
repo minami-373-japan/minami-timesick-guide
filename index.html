@@ -107,6 +107,7 @@
       color: #ff5477;
     }
 
+    /* 필수: 비디오 플레이어 화면 영역 */
     .video-wrapper {
       position: relative;
       width: 100%;
@@ -143,7 +144,7 @@
       color: #dddddd;
     }
 
-    /* 가사지 스타일 추가 */
+    /* 가사지 스타일 */
     .lyrics-box {
       margin-top: 24px;
       padding: 22px;
@@ -197,6 +198,19 @@
       font-size: 15px;
       line-height: 1.5;
       color: #ffffff;
+      font-weight: bold;
+    }
+
+    .lyric-roma {
+      font-size: 13px;
+      color: #ff8ba7;
+      font-weight: normal;
+    }
+
+    .lyric-kor {
+      font-size: 13px;
+      color: #aaaaaa;
+      font-weight: normal;
     }
 
     .lyric-cheer {
@@ -235,6 +249,7 @@
 
       <h2 id="song-title"></h2>
 
+      <!-- 유튜브 동영상 플레이어 영역 -->
       <div class="video-wrapper">
         <iframe
           id="youtube-player"
@@ -245,13 +260,13 @@
         </iframe>
       </div>
 
-      <!-- 응원 포인트 박스 -->
+      <!-- 응원 및 감상 포인트 영역 -->
       <div class="guide-box">
         <h3>응원 및 감상 포인트</h3>
         <ul id="guide-points"></ul>
       </div>
 
-      <!-- 싱크 가사지 박스 -->
+      <!-- 타임라인 가사지 영역 -->
       <div class="lyrics-box">
         <h3>타임라인 가사지 & 응원 가이드</h3>
         <div id="lyrics-list" class="lyrics-list"></div>
@@ -267,95 +282,97 @@
     const songs = [
       {
         title: "「비를 기다리다, (アメヲマツ、)」",
-        youtubeId: "766qmHTc2ro",
+        youtubeId: "766qmHTc2ro", // 요청하신 영상 ID
         guidePoints: [
           "박수 구간 및 박자 확인",
           "라이브 특유의 템포 감상 포인트",
           "곡 전체 응원 타이밍 가이드 작성 예정"
         ],
-        // 싱크 가사 데이터 (이 부분을 원하는 가사와 초 단위로 수정/추가하시면 됩니다)
-       lyrics: [
-  {
-    time: "0:49",
-    seconds: 49,
-    text: `過去形フィルムに縋った僕らは<br>
-           <span class="lyric-roma">카코 케이휘루무니 스갓타 보쿠라와</span><br>
-           <span class="lyric-kor">과거형 필름에 매달린 우리들은</span>`,
-    cheer: ""
-  },
-  {
-    time: "0:54",
-    seconds: 54,
-    text: `舵取り粘土に飲まれていつしか固まっていくようで<br>
-           <span class="lyric-roma">카지토리 넨도니 노마레테 이츠시카 카타맛테 이쿠 요-데</span><br>
-           <span class="lyric-kor">키잡이 점토에 휘말려 어느새 굳어져 가는 거 같아서</span>`,
-    cheer: ""
-  },
-  {
-    time: "1:01",
-    seconds: 61,
-    text: `言葉税が 足りなくなっていってさ<br>
-           <span class="lyric-roma">코토바제이가 타리나쿠 낫테 잇테사</span><br>
-           <span class="lyric-kor">말솜씨가 부족해져서 말이야</span>`,
-    cheer: ""
-  },
-  {
-    time: "1:07",
-    seconds: 67,
-    text: `書きなぐり漁った下書きをそっと強く塗りつぶす<br>
-           <span class="lyric-roma">카키나구리아삿타 시타가키오 솟토 츠요쿠 누리 부스</span><br>
-           <span class="lyric-kor">휘갈겨 쓴 초본을 지긋이, 세게 칠했어</span>`,
-    cheer: ""
-  },
-  {
-    time: "1:15",
-    seconds: 75,
-    text: `平気だよきっと誰かが 透明人間あてにした<br>
-           <span class="lyric-roma">헤이키다요 킷토 다레카가 토-메이닌겐 아테니시타</span><br>
-           <span class="lyric-kor">괜찮아 분명 누군가가 투명인간 취급을 했어</span>`,
-    cheer: ""
-  },
-  {
-    time: "1:21",
-    seconds: 81,
-    text: `ああやっぱ今日もだめだな<br>
-           <span class="lyric-roma">아아 얏파 쿄오모 다메다나</span><br>
-           <span class="lyric-kor">아아 역시 오늘도 안되겠네</span>`,
-    cheer: ""
-  },
-  {
-    time: "1:23",
-    seconds: 83,
-    text: `ファインダー越しのかわききってた<br>
-           <span class="lyric-roma">화인-다 코시노 카와키 킷테타</span><br>
-           <span class="lyric-kor">파인더 너머의 말라 비틀어져가</span>`,
-    cheer: ""
-  },
-  {
-    time: "1:27",
-    seconds: 87,
-    text: `僕にアメ降らせてくれないか<br>
-           <span class="lyric-roma">보쿠니 아메 후라세테 쿠레나이카</span><br>
-           <span class="lyric-kor">나에게 비를 내려주지 않을려나</span>`,
-    cheer: ""
-  },
-  {
-    time: "1:30",
-    seconds: 90,
-    text: `何度塗り替えても 濁ってしまって<br>
-           <span class="lyric-roma">난도 누리카에테모 니곳테 시맛테</span><br>
-           <span class="lyric-kor">몇 번이고 다시 칠해도 흐려져서</span>`,
-    cheer: ""
-  },
-  {
-    time: "1:33",
-    seconds: 93,
-    text: `今はもう届かなくなったリリック<br>
-           <span class="lyric-roma">이마와 모오 토도카나쿠 낫타 리릭쿠</span><br>
-           <span class="lyric-kor">지금은 더이상 닿지 않게 된 가사</span>`,
-    cheer: ""
-  }
-]
+        // 가사 데이터를 아래 형식처럼 추가하시면 됩니다.
+        lyrics: [
+          {
+            time: "0:49",
+            seconds: 49,
+            text: `過去形フィルムに縋った僕らは<br>
+                   <span class="lyric-roma">카코 케이휘루무니 스갓타 보쿠라와</span><br>
+                   <span class="lyric-kor">과거형 필름에 매달린 우리들은</span>`,
+            cheer: ""
+          },
+          {
+            time: "0:54",
+            seconds: 54,
+            text: `舵取り粘土に飲まれていつしか固まっていくようで<br>
+                   <span class="lyric-roma">카지토리 넨도니 노마레테 이츠시카 카타맛테 이쿠 요-데</span><br>
+                   <span class="lyric-kor">키잡이 점토에 휘말려 어느새 굳어져 가는 거 같아서</span>`,
+            cheer: ""
+          },
+          {
+            time: "1:01",
+            seconds: 61,
+            text: `言葉税が 足りなくなっていってさ<br>
+                   <span class="lyric-roma">코토바제이가 타리나쿠 낫테 잇테사</span><br>
+                   <span class="lyric-kor">말솜씨가 부족해져서 말이야</span>`,
+            cheer: ""
+          },
+          {
+            time: "1:07",
+            seconds: 67,
+            text: `書きなぐり漁った下書きをそっと強く塗りつぶす<br>
+                   <span class="lyric-roma">카키나구리아삿타 시타가키오 솟토 츠요쿠 누리 부스</span><br>
+                   <span class="lyric-kor">휘갈겨 쓴 초본을 지긋이, 세게 칠했어</span>`,
+            cheer: ""
+          },
+          {
+            time: "1:15",
+            seconds: 75,
+            text: `平気だよきっと誰かが 透明人間あてにした<br>
+                   <span class="lyric-roma">헤이키다요 킷토 다레카가 토-메이닌겐 아테니시타</span><br>
+                   <span class="lyric-kor">괜찮아 분명 누군가가 투명인간 취급을 했어</span>`,
+            cheer: ""
+          },
+          {
+            time: "1:21",
+            seconds: 81,
+            text: `ああやっぱ今日もだめだな<br>
+                   <span class="lyric-roma">아아 얏파 쿄오모 다메다나</span><br>
+                   <span class="lyric-kor">아아 역시 오늘도 안되겠네</span>`,
+            cheer: ""
+          },
+          {
+            time: "1:23",
+            seconds: 83,
+            text: `ファインダー越しのかわききってた<br>
+                   <span class="lyric-roma">화인-다 코시노 카와키 킷테타</span><br>
+                   <span class="lyric-kor">파인더 너머의 말라 비틀어져가</span>`,
+            cheer: ""
+          },
+          {
+            time: "1:27",
+            seconds: 87,
+            text: `僕にアメ降らせてくれないか<br>
+                   <span class="lyric-roma">보쿠니 아메 후라세테 쿠레나이카</span><br>
+                   <span class="lyric-kor">나에게 비를 내려주지 않을려나</span>`,
+            cheer: ""
+          },
+          {
+            time: "1:30",
+            seconds: 90,
+            text: `何度塗り替えても 濁ってしまって<br>
+                   <span class="lyric-roma">난도 누리카에테모 니곳테 시맛테</span><br>
+                   <span class="lyric-kor">몇 번이고 다시 칠해도 흐려져서</span>`,
+            cheer: ""
+          },
+          {
+            time: "1:33",
+            seconds: 93,
+            text: `今はもう届かなくなったリリック<br>
+                   <span class="lyric-roma">이마와 모오 토도카나쿠 낫타 리릭쿠</span><br>
+                   <span class="lyric-kor">지금은 더이상 닿지 않게 된 가사</span>`,
+            cheer: ""
+          }
+        ]
+      }
+    ];
 
     const songList = document.getElementById("song-list");
     const listSection = document.getElementById("list");
@@ -386,8 +403,9 @@
       detailSection.style.display = "block";
 
       songTitle.textContent = song.title;
+      // 노쿠키 도메인을 사용해 광고 추적을 줄이고 음소거 없이 재생 가능하도록 설정
       youtubePlayer.src =
-        `https://www.youtube-nocookie.com/embed/${song.youtubeId}?playsinline=1&rel=0&enablejsapi=1`;
+        `https://www.youtube-nocookie.com/embed/${song.youtubeId}?playsinline=1&rel=0`;
 
       // 응원 포인트 출력
       guidePoints.innerHTML = "";
@@ -420,7 +438,7 @@
       window.scrollTo(0, 0);
     }
 
-    // 타임스탬프 클릭 시 유튜브 시작 시간 세팅 기능
+    // 타임스탬프 클릭 시 해당 시점으로 이동하여 영상 재생
     function seekTo(seconds, youtubeId) {
       youtubePlayer.src =
         `https://www.youtube-nocookie.com/embed/${youtubeId}?start=${seconds}&autoplay=1&playsinline=1&rel=0`;
