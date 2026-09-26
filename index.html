@@ -226,6 +226,26 @@
       text-align: center;
       font-size: 12px;
     }
+    /* 가사 박스 전체를 클릭 가능한 영역으로 표시 */
+.lyric-item {
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.lyric-item:hover {
+  background: #30202a;
+}
+
+.lyric-item:focus-visible {
+  outline: 2px solid #ff5477;
+  outline-offset: 3px;
+}
+
+/* 마지막으로 클릭한 가사 표시 */
+.lyric-item.selected {
+  background: #30202a;
+  box-shadow: inset 3px 0 0 #ff5477;
+}
   </style>
 </head>
 
@@ -251,14 +271,9 @@
 
       <!-- 유튜브 동영상 플레이어 영역 -->
       <div class="video-wrapper">
-        <iframe
-          id="youtube-player"
-          src=""
-          title="YouTube video player"
-          allow="autoplay; encrypted-media; picture-in-picture"
-          allowfullscreen>
-        </iframe>
-      </div>
+        <div id="youtube-player"></div>
+</div>
+
 
       <!-- 응원 및 감상 포인트 영역 -->
       <div class="guide-box">
@@ -374,83 +389,202 @@
       }
     ];
 
-    const songList = document.getElementById("song-list");
-    const listSection = document.getElementById("list");
-    const detailSection = document.getElementById("detail");
-    const songTitle = document.getElementById("song-title");
-    const youtubePlayer = document.getElementById("youtube-player");
-    const guidePoints = document.getElementById("guide-points");
-    const lyricsList = document.getElementById("lyrics-list");
+const songList = document.getElementById("song-list");
+const listSection = document.getElementById("list");
+const detailSection = document.getElementById("detail");
+const songTitle = document.getElementById("song-title");
+const guidePoints = document.getElementById("guide-points");
+const lyricsList = document.getElementById("lyrics-list");
 
-    songs.forEach((song, index) => {
-      const button = document.createElement("button");
+let player = null;
+let playerReady = false;
+let currentSong = null;
+let pendingSeek = null;
 
-      button.className = "song-button";
-      button.innerHTML = `
-        <span class="song-number">${String(index + 1).padStart(2, "0")}</span>
-        ${song.title}
+// 유튜브 API 준비 완료를 기다리기 위한 Promise
+const youtubeApiReady = new Promise((resolve) => {
+  if (window.YT && window.YT.Player) {
+    resolve();
+    return;
+  }
+
+  window.onYouTubeIframeAPIReady = resolve;
+
+  const script = document.createElement("script");
+  script.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(script);
+});
+
+// 곡 목록 만들기
+songs.forEach((song, index) => {
+  const button = document.createElement("button");
+
+  button.className = "song-button";
+  button.innerHTML = `
+    <span class="song-number">
+      ${String(index + 1).padStart(2, "0")}
+    </span>
+    ${song.title}
+  `;
+
+  button.addEventListener("click", () => {
+    showDetail(song);
+  });
+
+  songList.appendChild(button);
+});
+
+// 곡 상세 화면 열기
+async function showDetail(song) {
+  currentSong = song;
+  pendingSeek = null;
+
+  listSection.style.display = "none";
+  detailSection.style.display = "block";
+
+  songTitle.textContent = song.title;
+
+  // 응원 포인트 출력
+  guidePoints.innerHTML = "";
+
+  song.guidePoints.forEach((point) => {
+    const li = document.createElement("li");
+    li.textContent = point;
+    guidePoints.appendChild(li);
+  });
+
+  // 가사 출력
+  lyricsList.innerHTML = "";
+
+  if (song.lyrics && song.lyrics.length > 0) {
+    song.lyrics.forEach((item) => {
+      const lyricDiv = document.createElement("div");
+
+      lyricDiv.className = "lyric-item";
+      lyricDiv.tabIndex = 0;
+      lyricDiv.setAttribute("role", "button");
+      lyricDiv.setAttribute(
+        "aria-label",
+        `${item.time} 가사 구간으로 이동`
+      );
+
+      // 시간은 별도 버튼이 아니라 박스 안의 표시로 사용
+      lyricDiv.innerHTML = `
+        <span class="lyric-time">${item.time}</span>
+
+        <div class="lyric-content">
+          <div class="lyric-text">${item.text}</div>
+          ${
+            item.cheer
+              ? `<div class="lyric-cheer">${item.cheer}</div>`
+              : ""
+          }
+        </div>
       `;
 
-      button.addEventListener("click", () => {
-        showDetail(song);
-      });
+      function activateLyric() {
+        lyricsList
+          .querySelectorAll(".lyric-item.selected")
+          .forEach((element) => {
+            element.classList.remove("selected");
+          });
 
-      songList.appendChild(button);
-    });
-
-    function showDetail(song) {
-      listSection.style.display = "none";
-      detailSection.style.display = "block";
-
-      songTitle.textContent = song.title;
-      // 노쿠키 도메인을 사용해 광고 추적을 줄이고 음소거 없이 재생 가능하도록 설정
-      youtubePlayer.src =
-        `https://www.youtube-nocookie.com/embed/${song.youtubeId}?playsinline=1&rel=0`;
-
-      // 응원 포인트 출력
-      guidePoints.innerHTML = "";
-      song.guidePoints.forEach((point) => {
-        const li = document.createElement("li");
-        li.textContent = point;
-        guidePoints.appendChild(li);
-      });
-
-      // 가사지 출력
-      lyricsList.innerHTML = "";
-      if (song.lyrics && song.lyrics.length > 0) {
-        song.lyrics.forEach((item) => {
-          const lyricDiv = document.createElement("div");
-          lyricDiv.className = "lyric-item";
-
-          lyricDiv.innerHTML = `
-            <button class="lyric-time" onclick="seekTo(${item.seconds}, '${song.youtubeId}')">${item.time}</button>
-            <div class="lyric-content">
-              <div class="lyric-text">${item.text}</div>
-              ${item.cheer ? `<div class="lyric-cheer">${item.cheer}</div>` : ""}
-            </div>
-          `;
-          lyricsList.appendChild(lyricDiv);
-        });
-      } else {
-        lyricsList.innerHTML = "<p style='color: #888;'>가사 준비 중입니다.</p>";
+        lyricDiv.classList.add("selected");
+        seekTo(item.seconds);
       }
 
-      window.scrollTo(0, 0);
-    }
+      // 시간, 일본어 가사, 발음, 번역, 빈 공간 모두 클릭 가능
+      lyricDiv.addEventListener("click", activateLyric);
 
-    // 타임스탬프 클릭 시 해당 시점으로 이동하여 영상 재생
-    function seekTo(seconds, youtubeId) {
-      youtubePlayer.src =
-        `https://www.youtube-nocookie.com/embed/${youtubeId}?start=${seconds}&autoplay=1&playsinline=1&rel=0`;
-    }
+      // 키보드에서도 Enter 또는 Space로 이동 가능
+      lyricDiv.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          activateLyric();
+        }
+      });
 
-    function showList() {
-      detailSection.style.display = "none";
-      listSection.style.display = "block";
+      lyricsList.appendChild(lyricDiv);
+    });
+  } else {
+    lyricsList.innerHTML =
+      "<p style='color: #888;'>가사 준비 중입니다.</p>";
+  }
 
-      youtubePlayer.src = "";
-      window.scrollTo(0, 0);
+  window.scrollTo(0, 0);
+
+  // API가 준비될 때까지 기다림
+  await youtubeApiReady;
+
+  // 기다리는 사이 목록으로 돌아갔거나 다른 곡을 선택했다면 중단
+  if (currentSong !== song) return;
+
+  if (!player) {
+    player = new YT.Player("youtube-player", {
+      host: "https://www.youtube-nocookie.com",
+      videoId: song.youtubeId,
+
+      playerVars: {
+        playsinline: 1,
+        rel: 0
+      },
+
+      events: {
+        onReady: (event) => {
+          playerReady = true;
+
+          if (!currentSong) return;
+
+          // 준비되는 사이 선택 곡이 바뀌었을 경우 반영
+          if (currentSong !== song) {
+            event.target.cueVideoById(currentSong.youtubeId);
+          }
+
+          // 준비 전에 가사를 눌렀다면 해당 시간으로 이동
+          if (pendingSeek !== null) {
+            const seconds = pendingSeek;
+            pendingSeek = null;
+            seekTo(seconds);
+          }
+        }
+      }
+    });
+  } else if (playerReady) {
+    player.cueVideoById(song.youtubeId);
+
+    if (pendingSeek !== null) {
+      const seconds = pendingSeek;
+      pendingSeek = null;
+      seekTo(seconds);
     }
+  }
+}
+
+// 플레이어를 새로 불러오지 않고 재생 위치만 변경
+function seekTo(seconds) {
+  if (!player || !playerReady) {
+    pendingSeek = seconds;
+    return;
+  }
+
+  player.seekTo(seconds, true);
+  player.playVideo();
+}
+
+// 곡 목록으로 돌아가기
+function showList() {
+  currentSong = null;
+  pendingSeek = null;
+
+  if (player && playerReady) {
+    player.pauseVideo();
+  }
+
+  detailSection.style.display = "none";
+  listSection.style.display = "block";
+
+  window.scrollTo(0, 0);
+}
   </script>
 </body>
 </html>
